@@ -51,8 +51,8 @@ li {
           <div>
             <b>Tutorials</b>
             <ul class="nav nav-sidebar" style="margin:0px;">
-              <li><a href="vagrantmongodbrubygit.html">Vagrant, MongoDB, Ruby and Git</a></li>
-
+              <li><a href="vagrantmongodbrubygit.html">Part 1: Vagrant, MongoDB, Ruby and Git</a></li>
+              <li><a href="pythonmoregit.html">Part 2: Python and more Git</a></li>
             </ul>
 
           </div>
@@ -60,7 +60,7 @@ li {
 
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Vagrant, MongoDB, Ruby and Git</h1>
+          <h1 class="page-header">Part 1: Vagrant, MongoDB, Ruby and Git</h1>
           <p>This tutorial will step-by-step explain how to create and run a linux vagrant virtual image, install MongoDB on that linux server, create a Ruby web service and store that into github.</p>
 
           <h3 class="page-header">Prerequisites</h3>
@@ -137,6 +137,7 @@ echo "Install Ruby Gem Bundler"
                     <li><b>apps</b></li>
                   </ul>
 
+
                 <li>Start the vagrant image:</li>
                   <ul>
                     <pre style="margin:0px">
@@ -150,7 +151,9 @@ vagrant up</pre>
           <h3 class="page-header" style="padding-top:10px">3. Create a Ruby App.</h3>
           <p>
             <ol>
-              <li>Inide the <b>apps</b> folder, create a new file called <b>Gemfile</b>. </li>
+              <li>Inide the <b>apps</b> folder, create a new folder called <b>rubyapp</b>. </li>
+
+              <li>Inide the <b>rubyapp</b> folder, create a new file called <b>Gemfile</b>. </li>
                 <ul>
                   <li>Add the following to <b>Gemfile</b>:</li>
 
@@ -160,10 +163,10 @@ source 'https://rubygems.org'
 gem 'mongo'
 gem 'sinatra'
 </pre>
-                  <small>This is file which just lists the Ruby library dependencies.</small>
+                  <small>This file lists the Ruby library dependencies.</small>
                 </ul>
 
-              <li>Inide the <b>apps</b> folder, create another file called <b>run.rb</b>. </li>
+              <li>Again inside the <b>rubyapp</b> folder, create another file called <b>run.rb</b>. </li>
                 <ul>
                   <li>Add the following to <b>run.rb</b>:</li>
 
@@ -207,7 +210,7 @@ end
                 </ul>
 
               <li>Navigate to the apps folder (<b>cd apps</b>)</li>
-
+              <li>Then navigate to the ruby app folder (<b>cd rubyapp</b>)</li>
               <li>Run the following command:</li>
                 <ul>
                   <pre style="margin:0px">bundle install</pre>

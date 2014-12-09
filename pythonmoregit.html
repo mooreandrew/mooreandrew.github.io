@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Tutorial: Python and More Git</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+<style>
+
+li {
+  padding: 7px;
+}
+
+</style>
+
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">mooreandrew.github.io</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <div>
+            <b>Tutorials</b>
+            <ul class="nav nav-sidebar" style="margin:0px;">
+              <li><a href="vagrantmongodbrubygit.html">Part 1: Vagrant, MongoDB, Ruby and Git</a></li>
+              <li><a href="pythonmoregit.html">Part 2: Python and more Git</a></li>
+            </ul>
+
+          </div>
+
+
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">Part 2: Python and more Git</h1>
+          <p>This tutorial will step-by-step explain add a Python web service with the same functionality as the ruby service created in Part 1 and branch/merge using git.</p>
+
+          <h3 class="page-header">Prerequisites</h3>
+          <ul>
+            <li style="padding: 0px;font-size: 15px"><a href="vagrantmongodbrubygit.html">Part 1 of the Guide</a></li>
+          </ul>
+
+          <h3 class="page-header" style="padding-top:10px">1. Branching the code</h3>
+          <p>
+            <ol>
+              <li>We want to branch our existing code. In the vagrant-env folder, run the following command: </li>
+                <ul>
+                  <pre style="margin:0px">git checkout -b "adding_python"</pre>
+                  <small>This has created a branch of your code. More information about branching can be found <b><a href="http://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging">here</a></b>.</small>
+                </ul>
+            </ol>
+          </p>
+
+          <h3 class="page-header" style="padding-top:10px">2. Expanding the Vagrant Files</h3>
+          <p>
+            <ol>
+              <li>Open the <b>Vagrantfile</b> and add the following: </li>
+                <ul>
+                  <pre style="margin:0px">
+  # Flask Ports
+  config.vm.network :forwarded_port, host: 5000, guest: 5000</pre>
+                  <small>Flask runs on a default port of 5000, this will allow you to connect to the virtual server using that port.</small>
+                </ul>
+
+              <li>Open the <b>provision.sh</b> and add the following: </li>
+                <ul>
+                  <pre style="margin:0px">
+echo "Install Python PIP"
+  apt-get -y install python-pip python-dev build-essential
+  pip install --upgrade pip
+  pip install --upgrade virtualenv</pre>
+                  <small>This adds PIP to the vagrant image, this allows you to run the command pip install which will install the Python dependencies. These commands are from <a href="http://www.saltycrane.com/blog/2010/02/how-install-pip-ubuntu/">here</a>.</small>
+                </ul>
+            </ol>
+          </p>
+
+
+
+
+
+          <h3 class="page-header" style="padding-top:10px">3. Create a Python App.</h3>
+          <p>
+            <ol>
+              <li>Inide the <b>apps</b> folder, create a new folder called <b>pythonapp</b>. </li>
+
+              <li>Inide the <b>pythonapp</b> folder, create a new file called <b>requirements.txt</b>. </li>
+                <ul>
+                  <li>Add the following to <b>requirements.txt</b> file:</li>
+
+                  <pre style="margin:0px">
+Flask==0.10.1
+pymongo==2.7.2
+ipython==2.3
+</pre>
+                  <small>This lists the Python library dependencies.</small>
+                </ul>
+
+              <li>Again inside the <b>pythonapp</b> folder, create another file called <b>run.py</b>. </li>
+                <ul>
+                  <li>Add the following to <b>run.rb</b>:</li>
+
+                  <pre style="margin:0px">
+from flask import Flask
+import pymongo
+app = Flask(__name__)
+
+# connecting to the database
+conn = pymongo.Connection()
+db = conn['example-db']
+coll = db['example-collection']
+
+@app.route('/add/<forename>/<surname>')
+def add_mongodb_record(forename, surname):
+    coll.insert({"surname": surname, "forename": forename})
+    return 'OK'
+
+@app.route('/find/<surname>')
+def find_mongodb_record(surname):
+    res = coll.find({"surname": surname})
+    return str(list(res))
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', debug=True)
+</pre>
+                  <small>This is creating a simple flask app, which has the ability to write and read from mongodb. This will create 2 web services: A write service at <b>http://localhost:5000/add/forename/surname</b> and a read service at <b>http://localhost:5000/find/surname</b>.</small>
+                </ul>
+
+
+            </ol>
+          </p>
+
+
+          <h3 class="page-header" style="padding-top:10px">4. Running the Python App</h3>
+          <p>
+            <ol>
+              <li>In the vagrant-env folder, run the following command: </li>
+                <ul>
+                  <pre style="margin:0px">Vagrant SSH</pre>
+                  <small>This will ssh into the vagrant enviornment, If you're using windows, you may meed to use <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">Putty</a> instead.</small>
+                </ul>
+
+              <li>Navigate to the apps folder (<b>cd apps</b>)</li>
+              <li>Then navigate to the python app folder (<b>cd pythonapp</b>)</li>
+              <li>Run the following command:</li>
+                <ul>
+                  <pre style="margin:0px">sudo pip install -r requirements.txt</pre>
+                  <small>This will read the content of the <b>requirements.txt</b> and install any missing dependencies.</small>
+                </ul>
+              <li>Now start the web service by running:</li>
+                <ul>
+                  <pre style="margin:0px">python run.py</pre>
+                  <small>This will start the web service on port 5000</small>
+                </ul>
+              <li>Open a web browser and Navigate to:</li>
+                <ul>
+                  <li>To create a web record:</li>
+                  <pre style="margin:0px">http://localhost:5000/add/Andrew/Moore</pre>
+                  <small>This will insert a record.</small>
+                </ul>
+                <ul>
+                  <li>To find a web record:</li>
+                  <pre style="margin:0px">http://localhost:5000/find/Moore</pre>
+                  <small>This will insert find all people matching that surname.</small>
+                </ul>
+
+            </ol>
+          </p>
+
+          <h3 class="page-header" style="padding-top:10px">5. Commiting and Merging</h3>
+          <p>
+            <ol>
+              <li>In the vagrant-env folder, run the following commands: </li>
+                <ul>
+                  <pre style="margin:0px">
+git add .
+git commit -m 'Adding Python Code'
+git push -u origin adding_python
+</pre>
+                  <small>This will have commited your changes to github.</small>
+                </ul>
+              <li>Check our your repoistory branches on github.com :</li>
+                <ul>
+                  <pre style="margin:0px">http://www.github.com/{name}/vagrant-env/branches</pre>
+                  <small>Replace {name} with your github signon.</small>
+                </ul>
+              <li>Click on the <b>adding_python</b> Branch</li>
+              <li>Click on the <b>Compare & pull request</b> button.</li>
+              <li>Click on the <b>Create Pull Request</b> button.</li>
+              <ul>
+                <small>This has created a pull request for your code to be merged into the master branch. Normally someone else would review your changes and approve the pull request. In this example you will approve your own pull request.</small>
+              </ul>
+              <li>Click on the <b>Merge Pull Request</b> button.</li>
+              <li>Click on the <b>Confirm Merge</b> button.</li>
+              <li>Your changes have now been merged. Check our your repoistory on github.com to see the additional code:</li>
+                <ul>
+                  <pre style="margin:0px">http://www.github.com/{name}/vagrant-env</pre>
+                  <small>Replace {name} with your github signon.</small>
+                </ul>
+
+            </ol>
+          </p>
+
+
+
+
+
+
+        </div>
+      </div>
+    </div>
+
+
+  </body>
+</html>
