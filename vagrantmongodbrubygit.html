@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Tutorial: Vagrant, MongoDB, Ruby and Git</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+<style>
+
+li {
+  padding: 7px;
+}
+
+</style>
+
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">mooreandrew.github.io</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <div>
+            <b>Tutorials</b>
+            <ul class="nav nav-sidebar" style="margin:0px;">
+              <li><a href="vagrantmongodbrubygit.html">Vagrant, MongoDB, Ruby and Git</a></li>
+
+            </ul>
+
+          </div>
+
+
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">Vagrant, MongoDB, Ruby and Git</h1>
+          <p>This tutorial will step-by-step explain how to create and run a linux vagrant virtual image, install MongoDB on that linux server, create a Ruby web service and store that into github.</p>
+
+          <h3 class="page-header">Prerequisites</h3>
+          <ul>
+            <li style="padding: 0px;font-size: 15px"><a href="http://git-scm.com">Git</a></li>
+            <li style="padding: 0px;font-size: 15px"><a href="https://www.vagrantup.com">Vagrant</a></li>
+            <li style="padding: 0px;font-size: 15px"><a href="https://www.virtualbox.org">VirtualBox</a></li>
+          </ul>
+
+          <h3 class="page-header" style="padding-top:10px">1. Create a Git Repository.</h3>
+          <p>
+            <ol>
+              <li>If you don't already have an account, sign up to <a href="http://www.github.com">GitHub</a>.</li>
+              <li>Create a new repository</li>
+                <ul>
+                  <li>Give the Repository a name of <b>vagrant-env</b>.</li>
+                  <li>Make the Repository <b>Public</b>.</li>
+                </ul>
+              <li>Clone the repository to your pc.</li>
+                <ul>
+                  <li>Open a Terminal/Command Prompt and run the following command:</li>
+
+                  <pre style="margin:0px">git clone git@github.com:{name}/vagrant-env.git</pre>
+                  <small>Replace {name} with your github signon.</small>
+                </ul>
+            </ol>
+          </p>
+
+          <h3 class="page-header"  style="padding-top:10px">2. Initilaze Vagrant</h3>
+          <p>
+            <ol>
+              <li>Open the command prompt and navigate to the vagrant-env folder.</li>
+              <li>Initialize the Vagrant configuration</li>
+                <ul>
+                  <pre style="margin:0px">vagrant init ubuntu/trusty64</pre>
+
+                  <small>This has created a <b>Vagrantfile</b>.</small>
+                </ul>
+              <li>Modify the <b>Vagrantfile</b> and add the following configration:</li>
+                <ul>
+                  <pre style="margin:0px">
+  # Once the server has booted, run the following shell script
+  config.vm.provision :shell, :path => 'provision.sh'
+
+  # Mongo DB Ports
+  config.vm.network :forwarded_port, host: 27017, guest: 27017
+  config.vm.network :forwarded_port, host: 27018, guest: 27018
+  config.vm.network :forwarded_port, host: 27019, guest: 27019
+  config.vm.network :forwarded_port, host: 28017, guest: 28017
+
+  # Sinatra Ports
+  config.vm.network :forwarded_port, host: 4567, guest: 4567
+
+  # Shares the app folder
+  config.vm.synced_folder "apps", "/home/vagrant/apps/"</pre>
+
+                </ul>
+              <li>Create a new file called <b>provision.sh</b> and put the following in:</li>
+                <ul>
+                  <pre style="margin:0px">
+echo "Install MondoDB"
+  apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
+  echo "deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen" | tee -a /etc/apt/sources.list.d/10gen.list
+  apt-get -y update
+  apt-get -y install mongodb-10gen
+
+echo "Install Ruby Gem Bundler"
+  gem install bundler</pre>
+                  <small>These commands were taken from <a href="https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-12-04">here</a>.</small>
+
+                </ul>
+                <li>Create the following folder:</li>
+                  <ul>
+                    <li><b>apps</b></li>
+                  </ul>
+
+                <li>Start the vagrant image:</li>
+                  <ul>
+                    <pre style="margin:0px">
+vagrant up</pre>
+                  </ul>
+
+            </ol>
+          </p>
+
+
+          <h3 class="page-header" style="padding-top:10px">3. Create a Ruby App.</h3>
+          <p>
+            <ol>
+              <li>Inide the <b>apps</b> folder, create a new file called <b>Gemfile</b>. </li>
+                <ul>
+                  <li>Add the following to <b>Gemfile</b>:</li>
+
+                  <pre style="margin:0px">
+source 'https://rubygems.org'
+
+gem 'mongo'
+gem 'sinatra'
+</pre>
+                  <small>This is file which just lists the Ruby library dependencies.</small>
+                </ul>
+
+              <li>Inide the <b>apps</b> folder, create another file called <b>run.rb</b>. </li>
+                <ul>
+                  <li>Add the following to <b>run.rb</b>:</li>
+
+                  <pre style="margin:0px">
+require 'mongo'
+require 'sinatra'
+
+set :bind, '0.0.0.0'
+
+include Mongo
+
+# connecting to the database
+client = MongoClient.new # defaults to localhost:27017
+db     = client['example-db']
+coll   = db['example-collection']
+
+get '/add/:forename/:surname' do
+  coll.insert({ :forename => params['forename'], :surname => params['surname'] })
+  return 'OK'
+end
+
+get '/find/:surname' do
+  res = coll.find({"surname" => params['surname']})
+  return res.to_a.to_s
+end
+</pre>
+                  <small>This is creating a simple sinatra app, which has the ability to write and read from mongodb. This will create 2 web services: A write service at <b>http://localhost:4567/add/forename/surname</b> and a read service at <b>http://localhost:4567/find/surname</b>.</small>
+                </ul>
+
+
+            </ol>
+          </p>
+
+          <h3 class="page-header" style="padding-top:10px">4. Running the Ruby App</h3>
+          <p>
+            <ol>
+              <li>In the vagrant-env folder, run the following command: </li>
+                <ul>
+                  <pre style="margin:0px">Vagrant SSH</pre>
+                  <small>This will ssh into the vagrant enviornment, If you're using windows, you may meed to use <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">Putty</a> instead.</small>
+                </ul>
+
+              <li>Navigate to the apps folder (<b>cd apps</b>)</li>
+
+              <li>Run the following command:</li>
+                <ul>
+                  <pre style="margin:0px">bundle install</pre>
+                  <small>This will read the content of the <b>Gemfile</b> and install any missing dependencies.</small>
+                </ul>
+              <li>Now start the web service by running:</li>
+                <ul>
+                  <pre style="margin:0px">ruby run.rb</pre>
+                  <small>This will start the web service on port 4567</small>
+                </ul>
+              <li>Open a web browser and Navigate to:</li>
+                <ul>
+                  <li>To create a web record:</li>
+                  <pre style="margin:0px">http://localhost:4567/add/Moore</pre>
+                  <small>This will insert a record.</small>
+                </ul>
+                <ul>
+                  <li>To find a web record:</li>
+                  <pre style="margin:0px">http://localhost:4567/find/Moore</pre>
+                  <small>This will insert find all people matching that surname.</small>
+                </ul>
+
+            </ol>
+          </p>
+
+          <h3 class="page-header" style="padding-top:10px">5. Commit your Changes</h3>
+          <p>
+            <ol>
+              <li>In the vagrant-env folder, run the following commands: </li>
+                <ul>
+                  <pre style="margin:0px">
+git add .
+git commit -m 'Adding'
+git push -u origin master
+</pre>
+                  <small>This will have commited your changes to github.</small>
+                </ul>
+              <li>Check our your repoistory on github.com :</li>
+                <ul>
+                  <pre style="margin:0px">http://www.github.com/{name}/vagrant-env</pre>
+                  <small>Replace {name} with your github signon.</small>
+                </ul>
+            </ol>
+          </p>
+
+
+
+
+
+        </div>
+      </div>
+    </div>
+
+
+  </body>
+</html>
