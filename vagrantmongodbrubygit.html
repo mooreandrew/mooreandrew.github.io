@@ -53,6 +53,7 @@ li {
             <ul class="nav nav-sidebar" style="margin:0px;">
               <li><a href="vagrantmongodbrubygit.html">Part 1: Vagrant, MongoDB, Ruby and Git</a></li>
               <li><a href="pythonmoregit.html">Part 2: Python and more Git</a></li>
+              <li><a href="jenkins.html">Part 3: Jenkins</a></li>
             </ul>
 
           </div>
@@ -83,7 +84,7 @@ li {
                 <ul>
                   <li>Open a Terminal/Command Prompt and run the following command:</li>
 
-                  <pre style="margin:0px">git clone git@github.com:{name}/vagrant-env.git</pre>
+                  <pre style="margin:0px">git clone https://github.com/{name}/vagrant-env.git</pre>
                   <small>Replace {name} with your github signon.</small>
                 </ul>
             </ol>
@@ -111,7 +112,7 @@ li {
   config.vm.network :forwarded_port, host: 27019, guest: 27019
   config.vm.network :forwarded_port, host: 28017, guest: 28017
 
-  # Sinatra Ports
+  # Sinatra Port
   config.vm.network :forwarded_port, host: 4567, guest: 4567
 
   # Shares the app folder
