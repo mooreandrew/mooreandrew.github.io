@@ -122,7 +122,7 @@ li {
               <li>Create a new file called <b>provision.sh</b> and put the following in:</li>
                 <ul>
                   <pre style="margin:0px">
-echo "Install MondoDB"
+echo "Install MongoDB"
   apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
   echo "deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen" | tee -a /etc/apt/sources.list.d/10gen.list
   apt-get -y update
@@ -206,7 +206,7 @@ end
             <ol>
               <li>In the vagrant-env folder, run the following command: </li>
                 <ul>
-                  <pre style="margin:0px">Vagrant SSH</pre>
+                  <pre style="margin:0px">vagrant ssh</pre>
                   <small>This will ssh into the vagrant enviornment, If you're using windows, you may meed to use <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">Putty</a> instead.</small>
                 </ul>
 

@@ -96,7 +96,6 @@ li {
                   <pre style="margin:0px">
 echo "Install Python PIP"
   apt-get -y install python-pip python-dev build-essential
-  pip install --upgrade pip
   pip install --upgrade virtualenv</pre>
                   <small>This adds PIP to the vagrant image, this allows you to run the command pip install which will install the Python dependencies. These commands are from <a href="http://www.saltycrane.com/blog/2010/02/how-install-pip-ubuntu/">here</a>.</small>
                 </ul>
@@ -170,7 +169,7 @@ if __name__ == '__main__':
             <ol>
               <li>In the vagrant-env folder, run the following command: </li>
                 <ul>
-                  <pre style="margin:0px">Vagrant SSH</pre>
+                  <pre style="margin:0px">vagrant ssh</pre>
                   <small>This will ssh into the vagrant enviornment, If you're using windows, you may meed to use <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">Putty</a> instead.</small>
                 </ul>
 
