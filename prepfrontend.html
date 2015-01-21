@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Adding Acceptance to to Propertyfrontend</title>
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://cdn.jsdelivr.net/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+  <style>
+
+  li {
+    padding: 7px;
+  }
+
+
+
+  </style>
+
+</head>
+
+<body>
+
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">mooreandrew.github.io</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-3 col-md-2 sidebar">
+        <div>
+          <b>Agile Tools Tutorials</b>
+          <ul class="nav nav-sidebar" style="margin:0px;">
+            <li><a href="vagrantmongodbrubygit.html">Part 1: Vagrant, MongoDB, Ruby and Git</a></li>
+            <li><a href="pythonmoregit.html">Part 2: Python and more Git</a></li>
+            <li><a href="jenkins.html">Part 3: Jenkins</a></li>
+          </ul>
+          <br />
+          <b>Example Acceptance Test</b>
+          <ul class="nav nav-sidebar" style="margin:0px;">
+            <li><a href="prepfrontend.html">Adding Acceptance to to Property-frontend</a></li>
+          </ul>
+
+        </div>
+
+
+      </div>
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <h1 class="page-header">Adding Acceptance to to Property-frontend</h1>
+        <p>This tutorial will step-by-step explain how to add an acceptance to the Property Frontend service.</p>
+
+        <p>The following scenario will be added</p>
+
+        <pre style="margin:0px">
+Scenario: Bankruptcy Notice not displayed on public view
+Given I am a citizen
+And a registered title with characteristics
+  | CHARACTERISTICS           |
+  | bankruptcy notice         |
+When I view the property on gov.uk
+Then I cannot see the following information displayed
+  | INFORMATION       |
+  | bankruptcy notice |</pre>
+
+          <br />
+
+
+          <h3 class="page-header">Prerequisites</h3>
+          <ul>
+            <li style="padding: 0px;font-size: 15px"><a href="https://github.com/LandRegistry/development-environment">Development Environment</a></li>
+          </ul>
+
+          <h3 class="page-header" style="padding-top:10px">1. Scenario Structure.</h3>
+          <p>
+
+            <pre>Given I am a citizen</pre>
+            <p>This is defining who is performing the action</p>
+            <br />
+            <pre>
+And a registered title with characteristics
+  | CHARACTERISTICS           |
+  | bankruptcy notice         |</pre>
+              <p> This is going to create data. A multidemsional hash is created which matches the json document structure. There are two ways you can create a title, by either using the command <b>And a registered title</b> (creates a standard title) and <b>And a registered title with characteristics</b> (creates a customisable title). If you create a title with characteristics, these characteristics are checked against a list of valid entris (found in lib/data_formatting.rb).
+                <br>
+                <b>Note:</b> To modify the document structure or modify/add additional attributes needs to be done in the acceptancetest-lib repository).
+              </p>
+              <br />
+              <pre>When I view the property on gov.uk</pre>
+              <p> This will visit the property page using the browser. This is a new step that hasn't been coded. </p>
+              <br />
+              <pre>Then I cannot see the following information displayed
+  | INFORMATION       |
+  | bankruptcy notice |</pre>
+                <p> This a generic step which will use the values in the INFORMATION list and turn it into functions. This will remove any spaces from the function and prefix it with <b>checkNotExist</b>. So this code is going to try and call the following function <b>checkNotExistbankruptcynotice()</b>. This function does exist and will need adding.</p>
+                <br />
+              </p>
+
+              <h3 class="page-header"  style="padding-top:10px">2. Load Development Environment</h3>
+              <p>
+                <ol>
+                  <li>Open the terminal and navigate to the development-environment folder.</li>
+                  <li>Load Vagrant by doing:</li>
+                  <ul>
+                    <pre style="margin:0px">vagrant up</pre>
+                  </ul>
+                  <li>Access the development environment by:</li>
+                  <ul>
+                    <pre style="margin:0px">vagrant ssh</pre>
+                    <small>This will ssh into the vagrant enviornment, If you're using windows, you may meed to use <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">Putty</a> instead.</small>
+                  </ul>
+                  <li>Run the Applictions by:</li>
+                  <ul>
+                    <pre style="margin:0px">lr-start-all</pre>
+                    <small>This will initiate all the applications. The Acceptance test run against dynamic code, which is why the applications need to be started.</small>
+
+                  </ul>
+                  <li>When you need to perform additional actions inside the development-environment, open a new tab and vagrant ssh again instead of stopping the applications running.</li>
+                </ol>
+              </p>
+
+
+              <h3 class="page-header" style="padding-top:10px">3. Adding the scenario</h3>
+              <p>
+                <ol>
+                  <li>Using atom, open the apps/propertyfrontend. </li>
+
+                  <li>Open the following path:  </li>
+                  <ul>
+
+                    <pre>acceptance-tests/features/citizen</pre>
+                  </ul>
+                  <li>Add the following file:</li>
+                  <ul>
+
+                    <pre>limited_display_data_display.feature</pre>
+                  </ul>
+
+                  <li>add the following content to <b>limited_display_data_display.feature</b>:</li>
+                  <ul>
+
+                    <pre>
+Feature: Checking private register information is hidden on the public view
+
+@property-frontend
+Scenario: Bankruptcy Notice not displayed on public view
+Given I am a citizen
+And a registered title with characteristics
+  | CHARACTERISTICS           |
+  | bankruptcy notice         |
+When I view the property on gov.uk
+Then I cannot see the following information displayed
+  | INFORMATION       |
+  | bankruptcy notice |</pre>
+
+                    <small><b>Note:</b> This has added a tag to the scenario. Additional tags can be added (e.g. @property-frontend @ALB-US1)</small>
+                  </ul>
+                </ol>
+              </p>
+
+              <h3 class="page-header" style="padding-top:10px">4. Running the scenario</h3>
+              <p>
+                <ol>
+                  <li>Open the terminal and navigate to the development-environment folder.</li>
+
+
+                  <li>Access the development environment by:</li>
+                  <ul>
+                    <pre style="margin:0px">vagrant ssh</pre>
+                    <small>This will ssh into the vagrant enviornment, If you're using windows, you may meed to use <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">Putty</a> instead.</small>
+                  </ul>
+                  <li>Navigate to the apps folder:</li>
+                  <ul>
+                    <pre style="margin:0px">cd apps</pre>
+                  </ul>
+                  <li>Navigate to the property-frontend folder:</li>
+                  <ul>
+                    <pre style="margin:0px">cd property-frontend</pre>
+                  </ul>
+                  <li>Navigate to the acceptance-tests folder:</li>
+                  <ul>
+                    <pre style="margin:0px">cd acceptance-tests</pre>
+                  </ul>
+
+                  <li>To run the scenario do:</li>
+                  <ul>
+                    <pre style="margin:0px">./run_tests.sh features/citizen/limited_display_data_display.feature</pre>
+                  </ul>
+
+
+                  <li>This should report that the following step hasn't been defined:</li>
+                  <ul>
+                    <pre style="margin:0px">You can implement step definitions for undefined steps with these snippets:
+
+When(/^I view the property on gov\.uk$/) do
+  pending # express the regexp above with the code you wish you had
+end</pre>
+                    </ul>
+
+                  </ol>
+                </p>
+
+                <h3 class="page-header" style="padding-top:10px">5. Adding Code</h3>
+                <p>
+                  <ol>
+                    <li>In the <b>preperty-frontend/acceptance-test/features/step_definitions</b> folder, add the following file:</li>
+                    <ul>
+                      <pre style="margin:0px">view_public_register.rb</pre>
+                    </ul>
+                    <li>Add the following code to <b>view_public_register.rb</b>:</li>
+                    <ul>
+                      <pre style="margin:0px">
+When(/^I view the property on gov\.uk$/) do
+  visit("#{$PROPERTY_FRONTEND_DOMAIN}/property/#{$regData['title_number']}")
+end               </pre>
+                        $PROPERTY_FRONTEND_DOMAIN is a variable for the property frontend domain, the default value is <b>http://property-frontend.landregistry.local</b> (you can see this in support/env.rb), but a variable is used so that it can be changed to be in different environments.
+                        <br /><br />
+                        $regData['title_number'] is part of the hash created when generating the title in the <b>And a registered title with characteristics</b> step. To see a dump of the hash, use the command <b>puts $regData</b>.
+                        <br />
+                      </ul>
+                      <li>Run the tests again:</li>
+                      <ul>
+                        <pre style="margin:0px">./run_tests.sh features/citizen/limited_display_data_display.feature</pre>
+                      </ul>
+
+                      <li>This should report that the following error:</li>
+                      <ul>
+                        <pre style="margin:0px">error
+                        </pre>
+
+                        <small><b>Note:</b> This isn't telling you that a step is missing because it is instead trying to call a function that doesn't exist. The function that is missing is: <b>checkNotExistbankruptcynotice()</b>.</small>
+
+                      </ul>
+
+                      <li>Add the following code to <b>view_public_register.rb</b>:</li>
+                      <ul>
+                        <pre style="margin:0px">
+def checkNotExistbankruptcynotice()
+  assert_no_match(/#{$regData['bankruptcy'][0]['full_text'].gsub('(', '\(')}/i, page.body, 'Expected to not see bankruptcy notice')
+end               </pre>
+                          The <b>assert_no_match</b> function will check to see if a condition is false (to test if it is true, use the assert_match fuction). In this case we are checking if the bankruptcy notice exists anywhere on the page (page.body), if it does exist, we will get the error "Expected to not see bankruptcy notice".
+                          <br /><br />
+                          $regData['bankruptcy'][0]['full_text'] is part of the hash created when generating the title in the <b>And a registered title with characteristics</b> step. To see a dump of the hash, use the command <b>puts $regData</b>.
+                          This is doing a regular expression to search the page for the value, regular expressions have special values (in this case they are ( and ) ), because of this the values need escaping, this means we need to add a \ before the character. We do this using the gsub command, which is basically a find and replace command gusb(find_value, replace_with_value).
+                          <br />
+                        </ul>
+                        <li>Run the tests again:</li>
+                        <ul>
+                          <pre style="margin:0px">./run_tests.sh features/citizen/limited_display_data_display.feature</pre>
+                        </ul>
+
+                        <li>All steps should pass!</li>
+
+
+
+                      </ol>
+                    </p>
+
+
+
+
+
+                  </div>
+                </div>
+              </div>
+
+
+            </body>
+            </html>
