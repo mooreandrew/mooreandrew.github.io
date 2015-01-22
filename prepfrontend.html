@@ -211,7 +211,7 @@ Then I cannot see the following information displayed
 
                   <li>This should report that the following step hasn't been defined:</li>
                   <ul>
-                    <pre style="margin:0px">You can implement step definitions for undefined steps with these snippets:
+                    <pre style="margin:0px;color:red">You can implement step definitions for undefined steps with these snippets:
 
 When(/^I view the property on gov\.uk$/) do
   pending # express the regexp above with the code you wish you had
@@ -246,8 +246,11 @@ end               </pre>
 
                       <li>This should report that the following error:</li>
                       <ul>
-                        <pre style="margin:0px">error
-                        </pre>
+                        <pre style="margin:0px;color:red">
+Then I cannot see the following information displayed  # lib/validate_steps.rb:11
+  | INFORMATION       |
+  | bankruptcy notice |
+undefined method `checkNotExistbankruptcynotice' for #<Object:0x00000003570730> (NoMethodError)  </pre>
 
                         <small><b>Note:</b> This isn't telling you that a step is missing because it is instead trying to call a function that doesn't exist. The function that is missing is: <b>checkNotExistbankruptcynotice()</b>.</small>
 
@@ -257,8 +260,8 @@ end               </pre>
                       <ul>
                         <pre style="margin:0px">
 def checkNotExistbankruptcynotice()
-  assert_no_match(/#{$regData['bankruptcy'][0]['full_text'].gsub('(', '\(')}/i, page.body, 'Expected to not see bankruptcy notice')
-end               </pre>
+  assert_no_match(/#{$regData['bankruptcy'][0]['full_text'].gsub('(', '\(').gsub(')', '\)')}/i, page.body, 'Expected to not see bankruptcy notice')
+end              </pre>
                           The <b>assert_no_match</b> function will check to see if a condition is false (to test if it is true, use the assert_match fuction). In this case we are checking if the bankruptcy notice exists anywhere on the page (page.body), if it does exist, we will get the error "Expected to not see bankruptcy notice".
                           <br /><br />
                           $regData['bankruptcy'][0]['full_text'] is part of the hash created when generating the title in the <b>And a registered title with characteristics</b> step. To see a dump of the hash, use the command <b>puts $regData</b>.
@@ -271,7 +274,13 @@ end               </pre>
                         </ul>
 
                         <li>All steps should pass!</li>
-
+                        <ul>
+                          <pre style="margin:0px">
+1 scenario (1 passed)
+4 steps (4 passed)
+0m7.727s
+                          </pre>
+                        </ul>
 
 
                       </ol>
