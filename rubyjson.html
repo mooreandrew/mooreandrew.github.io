@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Tutorial: Jenkins</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+<style>
+
+li {
+  padding: 7px;
+}
+
+</style>
+
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">mooreandrew.github.io</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <div>
+            <b>Agile Tools Tutorials</b>
+            <ul class="nav nav-sidebar" style="margin:0px;">
+              <li><a href="vagrantmongodbrubygit.html">Part 1: Vagrant, MongoDB, Ruby and Git</a></li>
+              <li><a href="pythonmoregit.html">Part 2: Python and more Git</a></li>
+              <li><a href="jenkins.html">Part 3: Jenkins</a></li>
+            </ul>
+            <br />
+            <b>Example Acceptance Test</b>
+            <ul class="nav nav-sidebar" style="margin:0px;">
+              <li><a href="prepfrontend.html">Adding Acceptance to to Property-frontend</a></li>
+            </ul>
+            <br />
+            <b>Ruby + JSON REST Service</b>
+            <ul class="nav nav-sidebar" style="margin:0px;">
+              <li><a href="rubyjson.html">Read + Write to JSON REST Service</a></li>
+            </ul>
+
+          </div>
+
+
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">Ruby + JSON REST Service</h1>
+          <p>This tutorial will step-by-step explain how to get data from a Json REST based service, and also send data to it.</p>
+          <p>We will be using 2 REST Web Services from: <a href="http://jsonplaceholder.typicode.com">http://jsonplaceholder.typicode.com</a></p>
+          <li>Retreiving a post: /posts/{post_number}</li>
+          <li>Adding a post: /posts</li>
+
+          <p>The /posts message requires the following data to be sent with it:
+            <pre>
+{
+  title: 'foo',
+  body: 'bar',
+  userId: 1
+}
+            </pre>
+
+
+          <h3 class="page-header">Prerequisites</h3>
+          <ul>
+            <li style="padding: 0px;font-size: 15px">Ruby Installed on your PC</li>
+          </ul>
+
+          <h3 class="page-header" style="padding-top:10px">1. Create a file called <b>jsontest.rb</b></h3>
+          <p>
+            You should create this in a folder, e.g. c:\rubyjson\jsontest.rb
+          </p>
+
+          <h3 class="page-header" style="padding-top:10px">2. POST and GET Functions</h3>
+          <p>
+            <ol>
+              <li>Open the <b>jsontest.rb</b> and add the following: </li>
+                  <pre style="margin:0px">
+require 'open-uri'
+require 'net/http'
+require 'json'
+
+#######
+# Function: rest_get_call
+# Description: This function should be used to do all get requests
+# Inputs:
+#     - url = The url that the web service is calling
+# Outputs:
+#     - curl response
+######
+def rest_get_call(url)
+  uri = URI.parse(url)
+
+  http = Net::HTTP.new(uri.host, uri.port)
+  request = Net::HTTP::Get.new(uri.path)
+  response = http.request(request)
+
+  return response
+end
+
+#######
+# Function: rest_post_call
+# Description: This function should be used to do all post requests
+# Inputs:
+#     - url = The url that the web service is calling
+#     - data = The data post for the post
+# Outputs:
+#     - curl response
+######
+def rest_post_call(url, data)
+  uri = URI.parse(url)
+
+  http = Net::HTTP.new(uri.host, uri.port)
+  request = Net::HTTP::Post.new(uri.path)
+  request.set_form_data(data)
+
+  response = http.request(request)
+
+  return response
+end</pre>
+                  <small>These are functions that we will use to make the rest calls.</small>
+
+
+            </ol>
+          </p>
+
+          <h3 class="page-header" style="padding-top:10px">3. Retreiving data from the JSON REST Service</h3>
+          <p>
+
+
+            <ol>
+              <li>At the end of the file add : </li>
+                  <li>To find a web record:</li>
+                  <pre style="margin:0px">
+result = rest_get_call('http://jsonplaceholder.typicode.com/posts/1').body
+puts results
+</pre>
+              <li>Run the File by typing <b>ruby test.rb</b> from the Command Prompt:</li>
+              <pre style="margin:0px;background:#000000;color:#FFFFFF">
+ruby test.rb
+{
+  "userId": 1,
+  "id": 1,
+  "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+  "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+}</pre>
+<li>This has printed out the output from the rest service. In the rest service we called /posts/1 which returned the first post, try changing this to /posts/2</li>
+
+
+
+            </ol>
+          </p>
+
+          <h3 class="page-header" style="padding-top:10px">4. Extracting data from REST Response</h3>
+          <p>
+            <ol>
+              <li>Remove <b>puts result</b> with: </li>
+                  <pre style="margin:0px">
+parsed_result = JSON.parse(result)
+puts 'The Post title is: ' + parsed_result['title']
+</pre>
+
+                <li>Run the File by typing <b>ruby test.rb</b> from the Command Prompt:</li>
+                <pre style="margin:0px;background:#000000;color:#FFFFFF">
+ruby test.rb
+The Post title is: sunt aut facere repellat provident occaecati excepturi optio reprehenderit</pre>
+
+<li>This has printed out the post title rather than the whole json response. This means we can now use this data in our ruby script (e.g. to validation the data is correct).</li>
+
+            </ol>
+          </p>
+
+
+          <h3 class="page-header" style="padding-top:10px">5. Adding a new record</h3>
+          <p> The web service has a post function, which will add data to the database. It requires the data in the following structure:
+            <pre>{
+  title: 'foo',
+  body: 'bar',
+  userId: 1
+}</pre>
+We don't need to send the data in as json, instead we can use a ruby hash.
+
+
+            <ol>
+              <li>At the end of the file add: </li>
+                  <pre style="margin:0px">
+$data = {}
+$data['title'] = 'foo'
+$data['body'] = 'bar'
+$data['userId'] = '1'
+result = rest_post_call('http://jsonplaceholder.typicode.com/posts', $data).body
+puts result
+</pre>
+
+                <li>Run the File by typing <b>ruby test.rb</b> from the Command Prompt:</li>
+                <pre style="margin:0px;background:#000000;color:#FFFFFF">
+ruby test.rb
+The Post title is: sunt aut facere repellat provident occaecati excepturi optio reprehenderit
+{
+  "title": "foo",
+  "body": "bar",
+  "userId": 1,
+  "id": 101
+}</pre>
+
+<li>This has printed out the json result from the post command. It has sent us back the data we sent it, as well as a new id of the post that it created.</li>
+
+            </ol>
+          </p>
+
+
+
+        </div>
+      </div>
+    </div>
+
+
+  </body>
+</html>
